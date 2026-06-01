@@ -449,20 +449,11 @@ function ModuloChat() {
 
     try {
       const history = [...msgs, userMsg].map(m => ({ role: m.role, content: m.content }));
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: `Você é o FiscoBot, um assistente especialista em contabilidade e legislação fiscal brasileira. 
-Seu foco é: NF-e, CFOP, CST, ICMS, PIS, COFINS, ISS, Simples Nacional, Lucro Presumido, Lucro Real, SPED, EFD, ECF, obrigações acessórias, e-Social, DCTF, EFD-Reinf, regras fiscais estaduais e federais.
-Responda de forma clara, objetiva e prática. Use exemplos concretos quando necessário. 
-Quando citar códigos (CFOP, CST, etc), sempre explique o que representam.
-Resposta em português brasileiro. Seja direto e útil para profissionais de contabilidade.`,
-          messages: history,
-        }),
-      });
+      const res = await fetch("/api/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ messages: history }),
+});
       const data = await res.json();
       const reply = data.content?.[0]?.text || "Erro ao obter resposta.";
       setMsgs(p => [...p, { role: "assistant", content: reply }]);
